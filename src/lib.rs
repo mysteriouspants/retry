@@ -1,18 +1,38 @@
 use std::time::Duration;
 use std::thread::sleep;
 
+/// An exponential backoff, measured in milliseconds, which
+/// retries until it reaches `max_retries`. As an exponential
+/// backoff, it follows the formula *an^b+c*, where *a* is
+/// `coefficient`, *b* is `exponent`, *c* is `constant`, and
+/// *n* is the attempt number. This means that the total time
+/// possible to spend waiting in a retry is given by the sum,
+/// from *1* to `max_retries`, of *an^b+c*.
 pub struct ExponentialBackoff<T, E> {
+
+    /// Block describing whether a given `Result` ought to be
+    /// considered retriable.
     pub should_retry: Box<Fn(&Result<T, E>) -> bool + Send + Sync>,
 
+    /// The maximum number of times to retry the operation
+    /// before giving up.
     pub max_retries: u8,
 
+    /// The constant to add to each backoff time.
     pub constant: f32,
+
+    /// The coefficient to multiply each exponentiated backoff
+    /// time by, before adding `constant`.
     pub coefficient: f32,
+
+    /// The exponent to raise the retry attempt to.
     pub exponent: f32
 }
 
 impl <T, E> ExponentialBackoff<T, E> {
     
+    /// A default backoff configured for networking with a
+    /// [61-second total backoff time](https://www.wolframalpha.com/input/?i=sum+0%2B1000t%5E1.5+from+1+to+7).
     pub fn new_with_defaults<
         TShouldRetry: Fn(&Result<T, E>) -> bool + Send + Sync + 'static
     > (should_retry: TShouldRetry) -> ExponentialBackoff<T, E> {
@@ -20,6 +40,7 @@ impl <T, E> ExponentialBackoff<T, E> {
         return ExponentialBackoff::new(7, 0.0, 1000.0, 0.5, should_retry);
     }
 
+    /// Creates a new backoff.
     pub fn new<
         TShouldRetry: Fn(&Result<T, E>) -> bool + Send + Sync + 'static
     > (
@@ -38,6 +59,8 @@ impl <T, E> ExponentialBackoff<T, E> {
         };
     }
 
+    /// Executes an operation, retrying it until it succeeds
+    /// or the maximum number of retries has been exhausted.
     pub fn retry<TRetriable>(
         &self,
         mut retriable_block: TRetriable
