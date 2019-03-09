@@ -3,5 +3,15 @@ name = "mysteriouspants_retry"
 version = "0.1.0"
 
 description = "Forgives failing code by letting it try again."
+readme = "README.md"
 
+authors = ["Christopher R. Miller <xpm@mysteriouspants.com>"]
 edition = "2018"
+
+documentation = "https://docs.rs/mysteriouspants-retry"
+repository = "https://github.com/mysteriouspants/retry"
+
+keywords = ["retry"]
+categories = [""]
+
+license = "BSD-2-Clause"
