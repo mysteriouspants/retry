@@ -59,3 +59,57 @@ impl <T, E> ExponentialBackoff<T, E> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::ExponentialBackoff;
+
+    #[test]
+    fn succeeds_after_two_retries() {
+        let result = retry_until_true(
+            vec![false, false, true]
+        );
+
+        match result {
+            Ok(_) => assert!(true),
+            Err(_) => assert!(false)
+        };
+    }
+
+    #[test]
+    fn fails_after_exhausting_retries() {
+        let v = vec![
+            false, false, false, false, false,
+            false, false, false
+        ];
+
+        let result = retry_until_true(v);
+
+        match result {
+            Ok(_) => assert!(false), // succeeded? impossible!
+            Err(_) => assert!(true) // failed as expected
+        };
+    }
+
+    fn retry_until_true(
+        mut v: Vec<bool>
+    ) -> Result<bool, bool> {
+        let backoff = ExponentialBackoff::new(
+            // tighten the timings to make the tests run faster
+            7, 0.0, 1.0, 2.0,
+            // retry until there is no "error"
+            |result: &Result<bool, bool>| !result.is_ok()
+        );
+
+        let result = backoff.retry(|| {
+            return match v.pop() {
+                Some(true) => Ok(true),
+                Some(false) => Err(false),
+                None => Err(false)
+            };
+        });
+
+        return result;
+    }
+}
+
