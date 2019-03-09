@@ -1,0 +1,7 @@
+[package]
+name = "mysteriouspants_retry"
+version = "0.1.0"
+
+description = "Forgives failing code by letting it try again."
+
+edition = "2018"
