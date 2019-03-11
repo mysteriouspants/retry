@@ -1,7 +1,7 @@
 # Retry
 
 [![Crates.io](https://img.shields.io/crates/v/mysteriouspants-retry.svg)](https://crates.io/crates/mysteriouspants-retry)
-[![Documentation](https://docs.rs/mysteriouspants-retry/badge.svg)](https://docs.rs/mysteriouspants-retry/)
+[![Documentation](https://docs.rs/mysteriouspants_retry/badge.svg)](https://docs.rs/mysteriouspants_retry/)
 
 A simple wrapper for retrying operations that may fail transiently.
 
