@@ -1,5 +1,5 @@
 [package]
-name = "mysteriouspants_retry"
+name = "mysteriouspants-retry"
 version = "0.1.0"
 
 description = "Forgives failing code by letting it try again."
@@ -15,3 +15,6 @@ keywords = ["retry"]
 categories = [""]
 
 license = "BSD-2-Clause"
+
+[badges]
+travis-ci = { repository = "mysteriouspants/retry" }
